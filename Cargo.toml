@@ -1,0 +1,8 @@
+[package]
+authors = ["Alejandro Gaviria <mr.gaviria@gmail.com>"]
+name = "coyete"
+version = "0.1.0"
+
+[dependencies]
+rocket = "0.3.2"
+rocket_codegen = "0.3.2"
