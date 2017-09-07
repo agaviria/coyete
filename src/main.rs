@@ -1,6 +1,6 @@
 extern crate coyete;
 
 fn main() {
-    // initializes routes
-    coyete::initialize();
+    // initializes routes && launches application
+    coyete::initialize().launch();
 }
