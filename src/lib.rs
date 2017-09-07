@@ -2,6 +2,8 @@
 #![plugin(rocket_codegen)]
 
 extern crate rocket;
+#[macro_use]
+extern crate log;
 extern crate serde;
 #[macro_use]
 extern crate serde_derive;
@@ -9,8 +11,13 @@ extern crate toml;
 
 pub mod config;
 pub mod handlers;
+pub mod logger;
 
 pub fn initialize() -> rocket::Rocket {
+    // initiate development staging log mechanism
+    logger::Logger::init_logger(logger::LogStage::Development);
+    info!("Logger initiated...");
+
     // configuration is under development therefore we assign unused variable.
     // consider implementing struct error messaging.
     let cfg = config::parse();
