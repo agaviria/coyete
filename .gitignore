@@ -4,6 +4,8 @@ Cargo.lock
 !src/vendor/**
 /src/target/
 
+.env
+
 **/*.rs.bk
 **/*.rs.swp
 **/*.sh
