@@ -1,4 +1,4 @@
 #[get("/")]
-fn index() -> &'static str {
+pub fn index() -> &'static str {
     "Hello, Rust + Rocket!"
 }

@@ -34,20 +34,11 @@ pub fn initialize() -> rocket::Rocket {
 }
 
 #[cfg(test)]
-mod test {
+mod log_test {
     use super::initialize;
-    use rocket::local::Client;
-    use rocket::http::Status;
     use std::env::current_dir;
     use super::logger;
 
-    #[test]
-    fn index_handler() {
-        let client = Client::new(initialize()).unwrap();
-        let mut resp = client.get("/").dispatch();
-        assert_eq!(resp.status(), Status::Ok);
-        assert_eq!(resp.body_string(), Some("Hello, Rust + Rocket!".into()));
-    }
     #[test]
     fn log_config() {
         logger::Logger::init_log(logger::LogStage::Testing);
