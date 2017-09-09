@@ -15,4 +15,4 @@ toml = "0.4.5"
 [dependencies.log4rs]
 features = ["toml_format"]
 optional = false
-version = "0.7.0"
+lkkllversion = "0.7.0"

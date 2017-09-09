@@ -4,7 +4,6 @@ Cargo.lock
 !src/vendor/**
 /src/target/
 
-src/config.toml
 .env
 
 **/*.rs.bk
