@@ -4,23 +4,26 @@
 extern crate rocket;
 #[macro_use]
 extern crate log;
+extern crate log4rs;
+extern crate config;
 extern crate serde;
 #[macro_use]
 extern crate serde_derive;
 extern crate toml;
 
-pub mod config;
+pub mod settings;
 pub mod handlers;
 pub mod logger;
 
-pub fn initialize() -> rocket::Rocket {
-    // initiate development staging log mechanism
-    logger::Logger::init_logger(logger::LogStage::Development);
-    info!("Logger initiated...");
+use settings::Settings;
 
-    // configuration is under development therefore we assign unused variable.
-    // consider implementing struct error messaging.
-    let cfg = config::parse();
+pub fn initialize() -> rocket::Rocket {
+    // load and parse configuration file
+    let cfg = Settings::new();
+
+    // initiate development staging log mechanism
+    logger::Logger::init_log(logger::LogStage::Development);
+    info!("Logger initiated...");
 
     rocket::ignite()
         .mount("/",
@@ -35,6 +38,8 @@ mod test {
     use super::initialize;
     use rocket::local::Client;
     use rocket::http::Status;
+    use std::env::current_dir;
+    use super::logger;
 
     #[test]
     fn index_handler() {
@@ -42,5 +47,15 @@ mod test {
         let mut resp = client.get("/").dispatch();
         assert_eq!(resp.status(), Status::Ok);
         assert_eq!(resp.body_string(), Some("Hello, Rust + Rocket!".into()));
+    }
+    #[test]
+    fn log_config() {
+        logger::Logger::init_log(logger::LogStage::Testing);
+        error!("running in {:?}", current_dir().unwrap().display());
+        error!("fatal");
+        warn!("warn");
+        info!("info");
+        debug!("debug");
+        trace!("trace");
     }
 }

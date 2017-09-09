@@ -4,6 +4,7 @@ name = "coyete"
 version = "0.1.0"
 
 [dependencies]
+config = "0.7.0"
 log = "0.3.8"
 rocket = "0.3.2"
 rocket_codegen = "0.3.2"

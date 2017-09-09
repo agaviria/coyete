@@ -1,31 +1,29 @@
 # configuration for log4rs logger mechanism
-
 refresh_rate = "15 seconds"
 
-[appenders.console]
+[appenders.stdout]
 kind = "console"
 
-[[appenders.console.filters]]
-kind = "threshold"
-level = "info"
 
-[appenders.console.encoder]
+[appenders.stdout.encoder]
 # pattern = "{d(%+)(local)} [{t}] {h({l})} {M}:{m}{n}"
 pattern = "[{h({l})}] {d(%Y/%m/%d_%H:%M:%S)(local)} <{M}> {m}{n}"
 
+[[appenders.stdout.filters]]
+kind = "threshold"
+level = "warn"
+
 [appenders.file]
 kind = "file"
-path  = "log/backend.log"
+path  = "logs/app_backend.log"
 
 [appenders.file.encoder]
 pattern = "[{h({l})}] {d(%Y/%m/%d_%H:%M:%S)(local)} <{M}> {m}{n}"
 
 [[appenders.file.filters]]
 kind = "threshold"
-level = "warn"
+level = "info"
 
 [root]
-level = "debug"
-appenders = ["console", "file"]
-
-# TODO: implement [loggers."test::a"]
+level = "trace"
+appenders = ["stdout", "file"]
