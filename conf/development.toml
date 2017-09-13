@@ -1,5 +1,7 @@
 debug = true
 
-[application]
+[server]
 address = "127.0.0.1"
 
+[token]
+secret = "x-auth.mAUsMH4fXw8SeWua"

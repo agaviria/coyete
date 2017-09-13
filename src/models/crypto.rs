@@ -69,8 +69,8 @@ pub struct UserToken;
 
 impl UserToken {
     use jwt::{self, encode, decode, Header, Validation};
-    use jwt::errors::Error as JwtError
-        use chrono::{Duration, UTC};
+    use jwt::errors::Error as JwtError;
+    use chrono::{Duration, UTC};
 
     // TODO:
     // * Research private ephemeral keys instead of (secret-key) session process.

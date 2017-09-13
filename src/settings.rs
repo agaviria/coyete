@@ -4,14 +4,20 @@ use config::{ConfigError, Config, File, Environment};
 const CFG_DEFAULT: &'static str = "conf/default";
 
 #[derive(Debug, Deserialize)]
-pub struct Application {
+pub struct Server {
     pub address: String,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct Jwt {
+    pub secret: String,
 }
 
 #[derive(Debug, Deserialize)]
 pub struct Settings {
     debug: bool,
-    application: Application,
+    server: Server,
+    token: Jwt,
 }
 
 // Settings uses a hierarchical configuration based on staging environment
