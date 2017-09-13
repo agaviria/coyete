@@ -1,6 +1,43 @@
+use rocket::Outcome;
+use rocket::request::{self, Request, FromRequest};
+use rocket::http::Status;
+
+// crypto constants
 const SALT_SIZE: usize = 32;
 const HASH_SIZE: usize = 32;
 const MIN_PWD_SIZE: usize = 6;
+// authentication guard constants
+const AUTH_PREFIX: &'static str = "x-auth ";
+const AUTH_SEPERATOR: &'static str = ":";
+
+
+#[derive(Serialize)]
+pub struct AuthorizationBearer(pub String);
+
+impl<'a 'r> FromRequest<'a, 'r> for AuthorizationBearer {
+    type Error = ();
+
+    fn from_request(req: &'a Request<'r>) -> request::Outcome<AuthorizationBearer, ()> {
+        let keys: Vec<_> = req.headers().get("Authorization").collect();
+        if keys.len() != 1 {
+            return Outcome::Failure((Status::BadRequest, ()));
+        };
+
+        let mut key: String = keys[0].to_string();
+        if !key.starts_with(BASIC_AUTH_PREFIX) {
+            return Outcome::Failure((Status::BadRequest, ()));
+        }
+
+        key = key.replace(AUTH_SEPERATOR, "");
+        let decoded = String::from_utf8(decode(&key).unwrap()).unwrap();
+        let auth: Vec<String> = decoded
+            .split(AUTH_SEPERATOR)
+            .map(|s| s.to_string())
+            .collect();
+
+        return Outcome::Success(AuthorizationBearer(auth.to_string()));
+    }
+}
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Cipher {
@@ -51,7 +88,7 @@ impl UserToken {
         Ok(token)
     }
 
-    pub fn decode(secret: &str, token: &str, sub: &str) -> bool {
+    pub fn validate(secret: &str, token: &str, sub: &str) -> bool {
         let validation = Validation {
             sub: Some(sub.to_string()),
             ..Default::default()
