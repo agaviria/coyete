@@ -3,6 +3,7 @@
 
 extern crate rocket;
 #[macro_use]
+extern crate argon2;
 extern crate log;
 extern crate log4rs;
 extern crate config;
@@ -10,6 +11,9 @@ extern crate serde;
 #[macro_use]
 extern crate serde_derive;
 extern crate toml;
+extern crate rand;
+extern crate jwt;
+extern crate chrono;
 
 pub mod settings;
 pub mod handlers;
