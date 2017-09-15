@@ -3,5 +3,17 @@ debug = true
 [server]
 address = "127.0.0.1"
 
+# recommended 512b random string
+# >$ openssl rand -base64 512
 [token]
-secret = "x-auth.DLQ5K2kmQxBzNS6U"
+secret = "6lR02Hf5PW/+bk0GXYhNuSCjlYtQkZbn0DWEBezB3nn8VQEMjnRrAmfUyl6DVmxT
+glWtP16V6U2pmjgnSHtOJ/nWzQ7vczlcHyH2fzRcSYXPQ4qeMju7I7GBejJtfN3c
+MchkePkJbWSJAKbtHu5d2el6eJun6N9x1Qb1c0xRtlnhotwoGLdlYrsAfiMniC12
+Sj3s40szhkerAqUWT+wGVKFz4oDDjRyR5LNZeeq1RcXUgoDip/JMyWrM1s3kE/T3
+D6zN2a2V+hRNMp8Cgn9Q0YMcN3JXFiLq9Cki2ZQjK5Wg8WQ7NDqt72ZXypmzcYow
+lqrdeJih5F107ps6R2eeJOgjh4K9Er5FhmPNo1Atc6ree0CXE0GiFHQq29WRnXXX
+rOcEF30p8wHwcYvG7ScwZIxqrI7i7IvN3G7PMrC69n6zo772Jh31BlveJYiw76r5
+hKA3ZGUqwKXfk4WPRt8FWWHzbVuvdlPCwsTqn0fI7HpIP0xukwHNYuactLZ3Jpuz
+iWDBz7TH5t05GbeRS+wWdhLp8s7QO50PbA7cYxUoMPF07ADWk/s8bg4NVLav2UCA
+rlHty991or+/SWKg+Zz8vSTrqjOiTGs20LDskzhJQiETEwJB0wgNORRybpjTuOJQ
+6D4+tcOJxGTI1Dj0XfdwMDIita5/RSy05H/XaEtVGFE="
