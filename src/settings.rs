@@ -9,15 +9,15 @@ pub struct Server {
 }
 
 #[derive(Debug, Deserialize)]
-pub struct Jwt {
+pub struct Token {
     pub secret: String,
 }
 
 #[derive(Debug, Deserialize)]
 pub struct Settings {
-    debug: bool,
-    server: Server,
-    token: Jwt,
+    pub debug: bool,
+    pub server: Server,
+    pub token: Token,
 }
 
 // Settings uses a hierarchical configuration based on staging environment

@@ -6,14 +6,17 @@ version = "0.1.0"
 [dependencies]
 chrono = "0.4.0"
 config = "0.7.0"
-jwt = "0.4.0"
+harsh = "0.1.4"
+lazy_static = "0.2.8"
 log = "0.3.8"
 rand = "0.3.16"
 rocket = "0.3.2"
 rocket_codegen = "0.3.2"
 rust-argon2 = "0.3.0"
+rwt = "0.3.0"
 serde = "1.0.11"
 serde_derive = "1.0.11"
+serde_json = "1.0.3"
 toml = "0.4.5"
 
 [dependencies.log4rs]
