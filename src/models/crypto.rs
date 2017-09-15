@@ -45,61 +45,6 @@ pub struct Cipher {
     pub hash: Vec<u8>,
 }
 
-#[derive(Serialize, Deserialize)]
-struct Claim {
-    // user id token issued for
-    sub: String,
-    // time issued
-    iat: i64,
-    // time expiration
-    exp: i64,
-}
-
-impl Claim {
-    fn new(sub: &str, iat: i64, exp: i64) -> Claim {
-        Claim {
-            sub: sub.to_string(),
-            iat: iat,
-            exp: exp,
-        }
-    }
-}
-
-pub struct UserToken;
-
-impl UserToken {
-    use jwt::{self, encode, decode, Header, Validation};
-    use jwt::errors::Error as JwtError;
-    use chrono::{Duration, UTC};
-
-    // TODO:
-    // * Research private ephemeral keys instead of (secret-key) session process.
-    //    * Determine a process which reduces vector attacks.
-
-    // takes in the user id(owner) of the UserToken and secret. Currently, secret
-    // is used as a static key to establish session.
-    // jwt encodes the claim into token header.
-    pub fn encode(sub: &str, secret: &str) -> Result<String, JwtError> {
-        let now = Utc::now();
-        let ttl = now + Duration::seconds(1800);
-        let claim = Claim::new(sub, now.timestamp(), ttl.timestamp());
-        let token = encode(&Header::default(), &claim, secret.as_bytes())?;
-
-        Ok(token)
-    }
-
-    pub fn validate(secret: &str, token: &str, sub: &str) -> bool {
-        let validation = Validation {
-            sub: Some(sub.to_string()),
-            ..Default::default()
-        };
-        match decode::<Claim>(&token, secret.as_bytes(), &validation) {
-            Ok(_) => true,
-            Err(_) => false,
-        }
-    }
-}
-
 #[derive(Debug, Serialize, Deserialize)]
 pub struct PassThruValidator {
     value: String,
