@@ -1,5 +1,5 @@
 use std::fmt;
-use std::error::Error as StdError
+use std::error::Error as StdError;
 
 use r2d2::{InitializationError, GetTimeout};
 
