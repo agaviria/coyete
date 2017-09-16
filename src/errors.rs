@@ -1,45 +1,90 @@
 use std::fmt;
 use std::error::Error as StdError;
 use std::io::Error as IoError;
-use jwt::errors::Error as JwtError;
+
+use self::ErrorKind::*;
+use super::persistance::Error as StorageError;
+use chrono::{DateTime, Utc};
+use rwt::RwtError;
+
+#[derive(Debug, PartialEq)]
+pub enum ErrorKind {
+    BadToken(RwtError),
+    Expired(DateTime<Utc>),
+    MinLen(usize),
+    Mismatch,
+    Salt(IoError),
+    Persistance(StorageError),
+    Unauthorized,
+}
 
 #[derive(Debug)]
-pub enum Error {
-    Salt(IoError),
-    PassThruValidator(usize),
-    Jwt(JwtError),
+pub struct Error {
+    kind: ErrorKind,
+    cause: Option<Box<StdError>>,
+    description: &'static str,
+}
+
+impl Error {
+    pub fn new(kind: ErrorKind, cause: Box<StdError>, description: &str) -> Error {
+        Error {
+            kind: kind,
+            cause: Some(cause),
+            description: description,
+        }
+    }
+
+    pub fn kind(&self) -> &ErrorKind {
+        &self.kind
+    }
 }
 
 impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match *self {
-            Error::Salt(ref err) => err.fmt(f),
-            Error::PassThruValidator(_) => write!(f, "password must not be empty"),
-            Error::Mismatch => write!(f, "password does not match"),
-            Error::Jwt(ref err) => err.fmt(f),
+        match self.kind {
+            BadToken => write!(f, "bad session token"),
+            Expired(ref expiration) => write!(f, "expired: {}", expiration),
+            MinLen => write!(f, "password does not meet minimum length requirement"),
+            Mismatch => write!(f, "password verification failure"),
+            Salt => write!(f, "cannot generate salt"),
+            Persistance => write!(f, "persistance storage"),
+            Unauthorized => write!(f, "unauthorized request"),
         }
     }
 }
 
 impl StdError for Error {
     fn description(&self) -> &str {
-        match *self {
-            Error::Salt(_) => "cannot generate salt",
-            Error::PassThruValidator(_) => "password must not be empty",
-            Error::Mismatch => "password does not match",
-            Error::Jwt(ref err) => err.description(),
-        }
+        self.description
     }
 }
 
 impl From<IoError> for Error {
-    fn from(err: IoError) -> Error {
-        Error::Salt(err)
+    fn from(err: IoError) -> Self {
+        Error {
+            kind: Salt,
+            cause: Some(Box::new(err)),
+            description: "Salt generator failure",
+        }
     }
 }
 
-impl From<JwtError> for Error {
-    fn from(err: JwtError) -> Error {
-        Error::Jwt(err)
+impl From<RwtError> for Error {
+    fn from(err: RwtError) -> Self {
+        Error {
+            kind: BadToken,
+            cause: Some(Box::new(err)),
+            description: "Bad token",
+        }
+    }
+}
+
+impl From<StorageError> for Error {
+    fn from(err: StorageError) -> Self {
+        Error {
+            kind: Persistance,
+            cause: Some(Box::new(err)),
+            description: err.description().to_string(),
+        }
     }
 }
