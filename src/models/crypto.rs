@@ -1,6 +1,7 @@
 use rocket::Outcome;
 use rocket::request::{self, Request, FromRequest};
 use rocket::http::Status;
+use argon2::{self, Config, ThreadMode, Variant, Version};
 
 // crypto constants
 const SALT_SIZE: usize = 32;
@@ -54,7 +55,7 @@ pub struct PassThruValidator {
 impl PassThruValidator {
     pub fn new(value: &str) -> Result<PassThruValidator, Error> {
         if value.len() < MIN_PWD_SIZE {
-            return Err(Error::PassThruValidator(MIN_PWD_SIZE));
+            return Err(Error::MinLen(MIN_PWD_SIZE));
         }
         Ok(PassThruValidator { value: value.to_string() })
     }
@@ -64,7 +65,6 @@ pub struct HashEncoder;
 
 impl HashEncoder {
     pub fn generate(sub: &str, credential: &PassThruValidator) -> Result<Cipher, Error> {
-        use argon2::{self, Config, ThreadMode, Variant, Version};
         // Argon2id is a hybrid version. It follows the Argon2i approach for the
         // first pass over memory and the Argon2d approach for subsequent passes.
         //
@@ -90,19 +90,25 @@ impl HashEncoder {
             hash: hash.to_vec(),
         })
     }
-}
 
-// generate_salt creates salt vector of 32 bytes
-pub fn generate_salt() -> Vec<u8> {
-    nonce(32).as_bytes().to_vec();
-}
+    pub fn compare(credential: &PassThruValidator, salt: String, conf: &Config) -> Result<Cipher, Error> {
+        let inspect  = argon2::hash_encoded(&credential, &salt, conf)
+            .map_err(|_| Error::Mismatch())?;
 
-// nonce takes a usize parameter for length
-fn nonce(take: usize) -> String {
-    use rand::{self, Rng};
+        Ok(inspect)
+    }
 
-    rand::thread_rng()
-        .gen_ascii_chars()
-        .take(take)
-        .collect::<String>()
-}
+    // generate_salt creates salt vector of 32 bytes
+    pub fn generate_salt() -> Vec<u8> {
+        nonce(32).as_bytes().to_vec();
+    }
+
+    // nonce takes a usize parameter for length
+    fn nonce(take: usize) -> String {
+        use rand::{self, Rng};
+
+        rand::thread_rng()
+            .gen_ascii_chars()
+            .take(take)
+            .collect::<String>()
+    }
