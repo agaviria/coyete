@@ -1,5 +1,3 @@
-pub mod error;
-
 use std::ops::Deref;
 use std::env;
 
@@ -20,10 +18,10 @@ impl<'a, 'r> FromRequest<'a, 'r> for PgConn {
     type Error = ();
 
     fn from_request(req: &'a Request<'r>) -> request::Outcome<PgConn, ()> {
-        let pool = req.guard::<State<conn>>()?;
+        let pool = req.guard::<State<PgDb>>()?;
         match pool.get() {
             Ok(conn) => Outcome::Success(PgConn(conn)),
-            Err(_) => Outcome::Failure((Status::ServiceUnavailable, ()))
+            Err(_) => Outcome::Failure((Status::ServiceUnavailable, ())),
         }
     }
 }
@@ -31,7 +29,7 @@ impl<'a, 'r> FromRequest<'a, 'r> for PgConn {
 impl Deref for PgConn {
     type Target = PostgresConnection;
 
-    fn deref(&self) -> &Self::Targe {
+    fn deref(&self) -> &Self::Target {
         &self.0
     }
 }
