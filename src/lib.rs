@@ -13,16 +13,20 @@ extern crate serde_json;
 extern crate serde_derive;
 #[macro_use]
 extern crate lazy_static;
+extern crate postgres;
 extern crate toml;
 extern crate rand;
+extern crate r2d2;
+extern crate r2d2_postgres;
 extern crate rwt;
 extern crate harsh;
 extern crate chrono;
 
-pub mod settings;
+pub mod auth;
 pub mod handlers;
 pub mod logger;
-pub mod auth;
+pub mod persistance;
+pub mod settings;
 
 mod service {
     // use std::sync::RwLock;
@@ -66,8 +70,7 @@ mod service {
 
 pub fn initialize() -> rocket::Rocket {
     use settings;
-    // load and parse configuration file
-    let cfg = settings::Settings::new();
+    use persistance;
 
     // initiate development staging log mechanism
     logger::Logger::init_log(logger::LogStage::Development);
@@ -78,7 +81,8 @@ pub fn initialize() -> rocket::Rocket {
                routes![
                handlers::index,
                ])
-        .manage(cfg)
+        .manage(settings::Settings::new())
+        .manage(persistance::pg_init_pool_mgr())
 }
 
 #[cfg(test)]
