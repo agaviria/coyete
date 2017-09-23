@@ -1,18 +1,15 @@
-pub mod claim;
+use std::str::FromStr;
 
 use rwt::{Rwt, RwtError};
 use self::claim::Claim;
+use api::response::APIResponse;
 
-use std::str::FromStr;
+pub mod claim;
 
 #[derive(Debug, Deserialize)]
 pub struct UserToken(pub Rwt<Claim>);
 
-impl UserToken {
-    // TODO:
-    // =========================================================================
-    // * Research use of private ephemeral keys instead of (secret-key).
-
+impl Token {
     pub fn payload(&self) -> &Claim {
         &self.0.payload
     }
@@ -35,16 +32,24 @@ impl UserToken {
     pub fn user(&self) -> &str {
         &self.0.payload.usr
     }
-
-    // TODO:
-    // =========================================================================
-    // * add `sub` struct field member of `auth::Claim` to an UserToken function.
 }
 
-impl FromStr for UserToken {
+impl FromStr for Token {
     type Err = RwtError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         Ok(UserToken(s.parse::<Rwt<Claim>>()?))
+    }
+}
+
+pub struct Authentication {
+    secret: Vec<u8>,
+}
+
+impl Authentication {
+    pub fn new<T: AsRef<[u8]>>(Secret) -> Authentication {
+        Authentication {
+            secret: Vec::from(secret.as_ref())
+        }
     }
 }

@@ -2,18 +2,21 @@
 #![plugin(rocket_codegen)]
 
 extern crate rocket;
+extern crate config;
 extern crate argon2;
+#[macro_use]
+extern crate lazy_static;
 #[macro_use]
 extern crate log;
 extern crate log4rs;
-extern crate config;
+#[macro_use]
+extern crate diesel;
+#[macro_use]
+extern crate diesel_codegen;
 extern crate serde;
-extern crate serde_json;
 #[macro_use]
 extern crate serde_derive;
-#[macro_use]
-extern crate lazy_static;
-extern crate postgres;
+extern crate serde_json;
 extern crate toml;
 extern crate rand;
 extern crate r2d2;
@@ -21,16 +24,20 @@ extern crate r2d2_postgres;
 extern crate rwt;
 extern crate harsh;
 extern crate chrono;
+extern crate uuid;
+extern crate coyete_data;
 
+pub mod api;
 pub mod auth;
 pub mod handlers;
 pub mod logger;
-pub mod persistance;
 pub mod settings;
+pub mod validation;
+
+use rocket::fairing::AdHoc;
+use chrono::Duration;
 
 mod service {
-    // use std::sync::RwLock;
-
     use config::{Config, File, FileFormat, ConfigError};
     use harsh::{Harsh, HarshBuilder};
     use settings::Token;
@@ -43,8 +50,6 @@ mod service {
             .salt(get_nonce().unwrap())
             .init()
             .expect("invalid harsh build");
-
-        // static ref CFG: RwLock<Config> = RwLock::new(conf_file());
     }
 
     pub fn harsh() -> &'static Harsh {
@@ -68,21 +73,36 @@ mod service {
     }
 }
 
+pub struct RuntimeConfig(Duration);
+
 pub fn initialize() -> rocket::Rocket {
     use settings;
-    use persistance;
+    use coyete_data;
 
     // initiate development staging log mechanism
     logger::Logger::init_log(logger::LogStage::Development);
     info!("Logger initiated...");
 
     rocket::ignite()
-        .mount("/",
-               routes![
-               handlers::index,
-               ])
         .manage(settings::Settings::new())
-        .manage(persistance::pg_init_pool_mgr())
+        .manage(coyete_data::persistance::pg_init_pool_mgr())
+        .attach(AdHoc::on_attach(|rocket| {
+            let auth_timeout = rocket
+                .config()
+                .get_int("auth_token_timeout_seconds")
+                .unwrap_or("10800");
+            let auth_token_duration = Duration::seconds(auth_timeout);
+            Ok(rocket.manage(RuntimeConfig(auth_token_duration)))
+        }))
+    .mount("/",
+           routes![
+           handlers::index,
+           ])
+
+        // TODO:
+        //
+        // * add catch error handlers: e.g. .catch(errors![]);
+        // * mount auth and api routes
 }
 
 #[cfg(test)]

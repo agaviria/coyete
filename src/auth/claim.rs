@@ -2,6 +2,7 @@ use chrono::Duration;
 use chrono::prelude::*;
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use rwt::RwtError;
+use uuid::Uuid;
 use service;
 
 use std::str::FromStr;
@@ -10,17 +11,17 @@ use std::str::FromStr;
 pub struct Claim {
     // time expiration
     pub exp: DateTime<Utc>,
-    // user id token issued for
-    pub sub: i64,
-    // bearer user
+    // user_id for token issued
+    pub uid: i64,
+    // bearer email
     pub usr: String,
 }
 
 impl Claim {
-    fn new<T: Into<String>>(sub: i64, usr: T) -> Claim {
+    fn new<T: Into<String>>(uid: i64, usr: T) -> Claim {
         Claim {
             exp: Utc::now() + Duration::seconds(1800),
-            sub,
+            uid,
             usr: usr.into(),
         }
     }
@@ -44,13 +45,13 @@ impl Serialize for Claim {
         #[derive(Serialize)]
         struct Template<'a> {
             exp: i64,
-            sub: String,
+            uid: String,
             usr: &'a str,
         }
 
         let template = Template {
             exp: self.exp.timestamp(),
-            sub: service::harsh().encode(&[self.sub as u64]).unwrap(),
+            uid: service::harsh().encode(&[self.uid as u64]).unwrap(),
             usr: &self.usr,
         };
 
@@ -71,17 +72,17 @@ impl<'a> Deserialize<'a> for Claim {
         #[derive(Deserialize)]
         struct Template {
             exp: i64,
-            sub: String,
+            uid: String,
             usr: String,
         }
 
-        let Template { exp, sub, usr } = Template::deserialize(deserializer)?;
+        let Template { exp, uid, usr } = Template::deserialize(deserializer)?;
         let exp = from_timestamp(exp).ok_or_else(|| Error::custom("Invalid timestamp"))?;
-        let sub = *service::harsh().decode(&sub)
+        let uid = *service::harsh().decode(&uid)
                        .unwrap()
                        .first()
                        .ok_or_else(|| Error::custom("Invalid user id"))? as i64;
 
-        Ok(Claim { exp, sub, usr })
+        Ok(Claim { exp, uid, usr })
     }
 }
