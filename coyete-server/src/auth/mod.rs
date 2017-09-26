@@ -5,9 +5,10 @@ use self::claim::Claim;
 use api::response::APIResponse;
 
 pub mod claim;
+pub mod security;
 
 #[derive(Debug, Deserialize)]
-pub struct UserToken(pub Rwt<Claim>);
+pub struct Token(pub Rwt<Claim>);
 
 impl Token {
     pub fn payload(&self) -> &Claim {
@@ -42,14 +43,23 @@ impl FromStr for Token {
     }
 }
 
+impl TokenResponse {
+    pub fn from_token(token: Token) -> Result<Self, RwtError> {
+        let expiration = token.timestamp();
+        token
+            .inner()
+            .encode()
+            .map(|token| TokenResponse { token, expiration })
+    }
+}
+
+
 pub struct Authentication {
     secret: Vec<u8>,
 }
 
 impl Authentication {
-    pub fn new<T: AsRef<[u8]>>(Secret) -> Authentication {
-        Authentication {
-            secret: Vec::from(secret.as_ref())
-        }
+    pub fn new<T: AsRef<[u8]>>(Secret: T) -> Authentication {
+        Authentication { secret: Vec::from(secret.as_ref()) }
     }
 }

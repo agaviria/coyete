@@ -13,4 +13,4 @@ extern crate r2d2_postgres;
 extern crate dotenv;
 
 pub mod persistance;
-pub mod models;
+pub mod users;

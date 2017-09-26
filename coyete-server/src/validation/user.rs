@@ -13,7 +13,7 @@ pub struct UserSerializer {
     #[serde(skip_deserializing)]
     pub id: Option<i64>,
     #[validate(email)]
-    pub email: String,
+    pub username: String,
     pub password: String,
 }
 
@@ -27,16 +27,11 @@ impl FromData for UserSerializer {
                          })?;
 
         let mut errors = HashMap::new();
-        if user.email == "" {
+        if user.username == "" {
             errors
-                .entry("email")
+                .entry("username")
                 .or_insert(vec![])
                 .push("Must not be empty.");
-        } else if !user.email.contains("@") || !user.email.contains(".") {
-            errors
-                .entry("email")
-                .or_insert(vec![])
-                .push("Invalid email format.");
         }
 
         if user.password == "" {
@@ -52,7 +47,7 @@ impl FromData for UserSerializer {
 
         return Success(UserSerializer {
                            id: None,
-                           email: user.email.clone(),
+                           username: user.username.clone(),
                            password: user.password.clone(),
                        });
     }

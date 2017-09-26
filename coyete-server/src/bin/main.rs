@@ -1,4 +1,9 @@
-extern crate coyete;
+#![feature(plugin)]
+#![plugin(rocket_codegen)]
+
+extern crate rocket;
+extern crate coyete_server;
+
 
 fn main() {
     // initialize log and setting configurations.

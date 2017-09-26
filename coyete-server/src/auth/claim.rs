@@ -2,7 +2,6 @@ use chrono::Duration;
 use chrono::prelude::*;
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use rwt::RwtError;
-use uuid::Uuid;
 use service;
 
 use std::str::FromStr;
@@ -13,7 +12,7 @@ pub struct Claim {
     pub exp: DateTime<Utc>,
     // user_id for token issued
     pub uid: i64,
-    // bearer email
+    // bearer username
     pub usr: String,
 }
 

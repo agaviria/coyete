@@ -26,6 +26,7 @@ extern crate harsh;
 extern crate chrono;
 extern crate uuid;
 extern crate coyete_data;
+extern crate dotenv;
 
 pub mod api;
 pub mod auth;
@@ -78,14 +79,19 @@ pub struct RuntimeConfig(Duration);
 pub fn initialize() -> rocket::Rocket {
     use settings;
     use coyete_data;
+    use dotenv::dotenv;
+    use std::env;
 
     // initiate development staging log mechanism
     logger::Logger::init_log(logger::LogStage::Development);
     info!("Logger initiated...");
 
+    dotenv().unwrap();
+    let database_url = env::var("DATABASE_URL").expect("DATABASE URL must be set");
+
     rocket::ignite()
         .manage(settings::Settings::new())
-        .manage(coyete_data::persistance::pg_init_pool_mgr())
+        .manage(coyete_data::persistance::init_pg_pool_mgr(database_url))
         .attach(AdHoc::on_attach(|rocket| {
             let auth_timeout = rocket
                 .config()
