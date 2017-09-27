@@ -1,11 +1,11 @@
 extern crate rocket;
-extern crate coyete;
+extern crate coyete_server;
 
 use rocket::local::Client;
 use rocket::http::{Status, ContentType};
 
 fn new_client() -> Client {
-    let r = coyete::initialize();
+    let r = coyete_server::initialize();
     Client::new(r).expect("valid rocket instance")
 }
 
@@ -15,7 +15,7 @@ mod backend_test {
     use std::env::current_dir;
     // use super::logger;
     use super::new_client;
-    use coyete;
+    use coyete_server;
 
     #[test]
     fn it_shows_index() {
@@ -25,7 +25,8 @@ mod backend_test {
         assert_eq!(resp.content_type().expect("valid Content-Type"),
                    ContentType::Plain);
         let body = resp.body_string();
-        assert_eq!(body.expect("body content"), coyete::handlers::index());
+        assert_eq!(body.expect("body content"),
+                   coyete_server::handlers::index());
     }
 
 }

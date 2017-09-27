@@ -1,7 +1,11 @@
 [package]
 authors = ["Alejandro Gaviria <mr.gaviria@gmail.com>"]
-name = "coyete"
+name = "coyete-server"
 version = "0.1.0"
+
+[[bin]]
+name = "coyete-server"
+path = "src/bin/main.rs"
 
 [dependencies]
 config = "0.7.0"
@@ -15,4 +19,4 @@ toml = "0.4.5"
 [dependencies.log4rs]
 features = ["toml_format"]
 optional = false
-lkkllversion = "0.7.0"
+version = "0.7.0"
