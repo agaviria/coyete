@@ -1,0 +1,38 @@
+[package]
+authors = ["Alejandro Gaviria <mr.gaviria@gmail.com>"]
+name = "coyete-data"
+repository = "https://github.com/agaviria/coyete"
+version = "0.1.0"
+
+[dependencies]
+dotenv = "0.10.1"
+r2d2 = "0.7.4"
+r2d2-diesel = "0.16.0"
+rand = "0.3.16"
+rocket = "0.3.2"
+rocket_codegen = "0.3.2"
+rust-argon2 = "0.3.0"
+serde = "1.0.15"
+serde_derive = "1.0.15"
+serde_json = "1.0.3"
+
+[dependencies.chrono]
+features = ["serde"]
+version = "0.4.0"
+
+[dependencies.diesel]
+features = ["postgres", "chrono", "uuid"]
+version = "0.16.0"
+
+[dependencies.diesel_codegen]
+features = ["postgres"]
+version = "0.16.0"
+
+[dependencies.uuid]
+features = ["serde", "v4"]
+version = "0.5.1"
+
+[lib]
+crate-type = ["lib"]
+name = "coyete_data"
+path = "src/lib.rs"
