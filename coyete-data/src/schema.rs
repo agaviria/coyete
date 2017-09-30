@@ -26,12 +26,9 @@ table! {
     users (id) {
         id -> Int4,
         email -> Varchar,
-        uuid_ -> Uuid,
-        level_ -> Int4,
         created_at -> Timestamp,
         updated_at -> Timestamp,
     }
 }
-
 joinable!(auth -> users (id));
 joinable!(sessions -> users (user_id));
