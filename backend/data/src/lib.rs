@@ -14,7 +14,6 @@ extern crate uuid;
 extern crate serde_json;
 
 pub mod certification;
-pub mod crypto;
 pub mod persistance;
 pub mod schema;
 pub mod users;
