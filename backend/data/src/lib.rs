@@ -13,7 +13,6 @@ extern crate dotenv;
 extern crate uuid;
 extern crate serde_json;
 
-pub mod errors;
 pub mod certification;
 pub mod crypto;
 pub mod persistance;
