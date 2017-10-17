@@ -8,6 +8,7 @@ name = "coyete-server"
 path = "src/bin/main.rs"
 
 [dependencies]
+accord = "0.2.2"
 config = "0.7.0"
 log = "0.3.8"
 rocket = "0.3.2"

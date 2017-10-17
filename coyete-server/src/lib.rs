@@ -3,6 +3,8 @@
 
 extern crate rocket;
 #[macro_use]
+extern crate accord;
+#[macro_use]
 extern crate log;
 extern crate log4rs;
 extern crate config;
