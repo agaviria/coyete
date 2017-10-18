@@ -1,8 +1,16 @@
 [package]
 authors = ["Alejandro Gaviria <mr.gaviria@gmail.com>"]
-name = "data"
+name = "coyete_data"
 repository = "https://github.com/agaviria/coyete"
 version = "0.1.0"
+
+[lib]
+name = "coyete_data"
+path = "src/lib.rs"
+test = true
+
+[features]
+default = []
 
 [dependencies]
 dotenv = "0.10.1"
@@ -28,10 +36,3 @@ version = "0.16.0"
 [dependencies.uuid]
 features = ["use_std", "serde", "v4"]
 version = "0.5.1"
-
-[lib]
-path = "src/lib.rs"
-test = true
-
-[features]
-default = []

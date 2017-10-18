@@ -35,7 +35,7 @@ pub fn initialize() -> rocket::Rocket {
 
 #[cfg(test)]
 mod log_test {
-    use super::initialize;
+    // use super::initialize;
     use std::env::current_dir;
     use super::logger;
 
