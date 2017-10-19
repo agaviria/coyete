@@ -1,29 +1,32 @@
 extern crate log4rs;
 
-pub struct Logger(LogStage);
+use std::error::Error;
+use log::LogLevelFilter;
+use log4rs::config::{Appender, Config, Root};
+use log4rs::init_config;
+use log4rs::append::console::ConsoleAppender;
+use log4rs::append::file::FileAppender;
+use log4rs::encode::pattern::PatternEncoder;
 
-// LogStage refers to the stage environment used for output and console logging.
-pub enum LogStage {
-    Testing,
-    Development,
-    Production,
-}
+pub fn init_log() -> Result<(), Box<Error>> {
+    let stdout = ConsoleAppender::builder()
+        .encoder(Box::new(PatternEncoder::new("{d(%Y-%m-%d %H:%M:%S)} {h([{l}])}: {m}{n}")))
+        .build();
 
-impl Logger {
-    pub fn init_log(env: LogStage) {
-        match env {
-            LogStage::Testing => {
-                log4rs::init_file("conf/log/log_test.toml", Default::default())
-                    .expect("init test log failure")
-            }
-            LogStage::Development => {
-                log4rs::init_file("conf/log/log_config.toml", Default::default())
-                    .expect("init dev log failure")
-            }
-            LogStage::Production => {
-                log4rs::init_file("conf/log/log_config.toml", Default::default())
-                    .expect("init production log failure")
-            }
-        }
-    }
+    let logfile = try!(FileAppender::builder()
+                 .encoder(Box::new(PatternEncoder::new("{d(%m-%d-%Y %H:%M:%S)} [{l}]: {m}{n}")))
+                 .append(true)
+                 .build("logs/app_backend.log"));
+
+    let config = try!(Config::builder()
+                          .appender(Appender::builder().build("stdout", Box::new(stdout)))
+                          .appender(Appender::builder().build("logfile", Box::new(logfile)))
+                          .build(Root::builder()
+                                     .appender("stdout")
+                                     .appender("logfile")
+                                     .build(LogLevelFilter::Debug)));
+
+    init_config(config)?;
+    Ok(())
+
 }

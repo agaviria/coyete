@@ -31,7 +31,6 @@ fn get_test_db_conn() -> PgConnection {
 #[cfg(test)]
 mod backend_test {
     use rocket::http::{Status, ContentType};
-    // use super::logger;
     use super::{new_client, get_test_db_conn};
     use backend::handlers;
 
